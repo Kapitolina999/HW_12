@@ -1,0 +1,2 @@
+class WrongImgType(Exception):
+    pass
