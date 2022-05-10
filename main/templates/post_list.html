@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Все посты найденные по запросу {{search}}</title>
-    <link rel="stylesheet" href="/../static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 <body>
 <main>
@@ -12,16 +13,17 @@
 
     <h1>Посты по запросу {{search}}</h1>
 
+
+    {% if len_ == 0 %}
+    <div><p>По запросу нет постов</p></div>
+    {% endif %}
+
     {% for post in posts %}
-    {% if len = 0 %}:
-    <p>По запросу нет постов</p>
-    {% else %}
     <div class="post">
     <img src="{{post.pic}}" width="100%" alt="">
     <p>{{post.content}}</p>
     </div>
     <hr>
-    {% endif %}
     {% endfor %}
 
 

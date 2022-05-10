@@ -1,10 +1,9 @@
 from flask import Blueprint, request, render_template, send_from_directory
-import logging
-from exceptions import *
+
+from logging_exemplar import logger_main
+from exceptions import WrongImgType
 from classes.posts import Posts
 
-
-logging.basicConfig(filename='logger.log', level=logging.INFO)
 
 loader_blueprint = Blueprint('loader_blueprint', __name__,
                              template_folder='templates')
@@ -27,18 +26,19 @@ def post_page():
     content = request.form.get("content")
 
     if not picture:
-        logging.info('Картинки нет')
+        logger_main.info('Не загрузили картинку')
         return "Загрузи картинку"
-    else:
-        try:
-            path = posts.save_picture(picture)
-        except WrongImgType:
-            return 'Неверный тип файла'
-        return render_template('post_uploaded.html',
-                               post=posts.add_post(path, content))
 
-#
-# @loader_blueprint.route('/uploads/<path:path>')
-# def static_dir(path):
-#     return send_from_directory('uploads', path)
-#
+    try:
+        path = posts.save_picture(picture)
+    except WrongImgType:
+        logger_main.exception('Загрузили не картинку')
+        return 'Неверный тип файла'
+    return render_template('post_uploaded.html',
+                            post=posts.add_post(path, content))
+
+
+@loader_blueprint.route('/uploads/<path:path>')
+def static_dir(path):
+    return send_from_directory('uploads', path)
+

@@ -1,6 +1,6 @@
 import json
-from exceptions import *
 
+from exceptions import WrongImgType
 
 class Posts:
     """
@@ -20,17 +20,21 @@ class Posts:
         :return: вложенный список постов
         """
         with open(self.path, encoding='utf-8') as file:
-            return json.load(file)
+            try:
+                data = json.load(file)
+            except (FileNotFoundError, json.JSONDecodeError):
+                raise DataSourceReadError('Файл не найден или не загружается')
+            if type(data) != list:
+                raise DataSourceReadError('Данные не список')
+            return data
 
     def get_posts_by_word(self, word):
         """
         :param word: слово, по которому ведется поиск постов
         :return: список найденных постов, содержащих слово 'word'
         """
-        posts_founded = []
-        for post in self.load_posts():
-            if word.lower() in post["content"].lower():
-                posts_founded.append(post)
+        posts_founded = [post for post in self.load_posts() if
+                         word.lower() in post["content"].lower()]
         return posts_founded
 
     def save_picture(self, picture):
