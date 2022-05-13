@@ -1,6 +1,8 @@
 import json
 
-from exceptions import WrongImgType
+from exceptions import WrongImgType, DataSourceReadError
+from logging_exemplar import logger_main
+
 
 class Posts:
     """
@@ -22,11 +24,15 @@ class Posts:
         with open(self.path, encoding='utf-8') as file:
             try:
                 data = json.load(file)
-            except (FileNotFoundError, json.JSONDecodeError):
-                raise DataSourceReadError('Файл не найден или не загружается')
+            except FileNotFoundError:
+                logger_main.exception('Файл не найден')
+                raise DataSourceReadError('Файл не найден')
+            except json.JSONDecodeError:
+                raise json.JSONDecodeError('Ошибка при чтении данных '
+                                           'в JSON из файла')
             if type(data) != list:
                 raise DataSourceReadError('Данные не список')
-            return data
+            return data 
 
     def get_posts_by_word(self, word):
         """

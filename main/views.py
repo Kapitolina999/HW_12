@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from json import JSONDecodeError
+# from json import JSONDecodeError
 
 from logging_exemplar import logger_main
 from classes.posts import Posts
